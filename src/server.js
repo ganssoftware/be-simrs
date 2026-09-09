@@ -17,10 +17,42 @@ const registerRoute = require("./routes/registerRoute");
 
 const app = express();
 
+const allowedOrigins = [
+    "https://simrs-ten.vercel.app",
+];
+
 app.use(
     cors({
-        origin: "https://simrs-ten.vercel.app",
+        origin: function (origin, callback) {
+            // Request tanpa origin
+            if (!origin) {
+                return callback(null, true);
+            }
+
+            if (allowedOrigins.includes(origin)) {
+                return callback(null, true);
+            }
+
+            return callback(
+                new Error("Not allowed by CORS")
+            );
+        },
+
         credentials: true,
+
+        methods: [
+            "GET",
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE",
+            "OPTIONS",
+        ],
+
+        allowedHeaders: [
+            "Content-Type",
+            "Authorization",
+        ],
     })
 );
 
@@ -52,6 +84,8 @@ if (process.env.NODE_ENV !== "production") {
     const PORT = process.env.PORT || 5000;
 
     app.listen(PORT, () => {
-        console.log(`SIMRS API running on port ${PORT}`);
+        console.log(
+            `SIMRS API running on port ${PORT}`
+        );
     });
 }
