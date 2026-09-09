@@ -5,6 +5,13 @@ const authModel = require("../models/authModel");
 
 const login = async (req, res) => {
     try {
+        console.log("===== LOGIN START =====");
+        console.log("Username:", req.body.username);
+        console.log(
+            "JWT_SECRET tersedia:",
+            !!process.env.JWT_SECRET
+        );
+
         const { username, password } = req.body;
 
         if (!username || !password) {
@@ -14,7 +21,17 @@ const login = async (req, res) => {
             });
         }
 
-        const user = await authModel.findUserByUsername(username);
+        console.log("Mencari user...");
+
+        const user =
+            await authModel.findUserByUsername(
+                username
+            );
+
+        console.log(
+            "User ditemukan:",
+            !!user
+        );
 
         if (!user) {
             return res.status(401).json({
@@ -23,6 +40,16 @@ const login = async (req, res) => {
             });
         }
 
+        console.log(
+            "User ID:",
+            user.id
+        );
+
+        console.log(
+            "User aktif:",
+            user.is_active
+        );
+
         if (!user.is_active) {
             return res.status(403).json({
                 success: false,
@@ -30,17 +57,28 @@ const login = async (req, res) => {
             });
         }
 
-        const passwordMatch = await bcrypt.compare(
-            password,
-            user.password
+        console.log("Mengecek password...");
+
+        const passwordMatch =
+            await bcrypt.compare(
+                password,
+                user.password
+            );
+
+        console.log(
+            "Password match:",
+            passwordMatch
         );
 
         if (!passwordMatch) {
             return res.status(401).json({
                 success: false,
-                message: "Username atau password salah",
+                message:
+                    "Username atau password salah",
             });
         }
+
+        console.log("Membuat JWT...");
 
         const token = jwt.sign(
             {
@@ -54,6 +92,8 @@ const login = async (req, res) => {
             }
         );
 
+        console.log("JWT berhasil dibuat");
+
         res.status(200).json({
             success: true,
             message: "Login berhasil",
@@ -64,17 +104,33 @@ const login = async (req, res) => {
                     username: user.username,
                     email: user.email,
                     full_name: user.full_name,
-                    profile_photo: user.profile_photo,
+                    profile_photo:
+                        user.profile_photo,
                     role: user.role_name,
                 },
             },
         });
+
+        console.log("===== LOGIN SUCCESS =====");
+
     } catch (error) {
-        console.error("login:", error);
+        console.error(
+            "===== LOGIN ERROR ====="
+        );
+        console.error(error);
+        console.error(
+            "Message:",
+            error.message
+        );
+        console.error(
+            "Stack:",
+            error.stack
+        );
 
         res.status(500).json({
             success: false,
-            message: "Terjadi kesalahan pada server",
+            message:
+                "Terjadi kesalahan pada server",
         });
     }
 };
