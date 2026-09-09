@@ -181,38 +181,30 @@ const updateProfile = async (req, res) => {
         if (!full_name) {
             return res.status(400).json({
                 success: false,
-                message:
-                    "Nama lengkap wajib diisi",
+                message: "Nama lengkap wajib diisi",
             });
         }
 
         if (!email) {
             return res.status(400).json({
                 success: false,
-                message:
-                    "Email wajib diisi",
+                message: "Email wajib diisi",
             });
         }
 
-        if (
-            password &&
-            password.length < 6
-        ) {
+        if (password && password.length < 6) {
             return res.status(400).json({
                 success: false,
-                message:
-                    "Password minimal 6 karakter",
+                message: "Password minimal 6 karakter",
             });
         }
 
-        const existingUser =
-            await findUserById(userId);
+        const existingUser = await findUserById(userId);
 
         if (!existingUser) {
             return res.status(404).json({
                 success: false,
-                message:
-                    "User tidak ditemukan",
+                message: "User tidak ditemukan",
             });
         }
 
@@ -221,29 +213,69 @@ const updateProfile = async (req, res) => {
 
         if (
             existingEmail &&
-            Number(existingEmail.id) !==
-            Number(userId)
+            Number(existingEmail.id) !== Number(userId)
         ) {
             return res.status(409).json({
                 success: false,
-                message:
-                    "Email sudah digunakan oleh user lain",
+                message: "Email sudah digunakan oleh user lain",
             });
         }
 
-        const profilePhoto =
-            req.file
-                ? `/uploads/profiles/${req.file.filename}`
-                : null;
+        let profilePhoto = existingUser.profile_photo;
+
+        // Upload foto baru ke Supabase Storage
+        if (req.file) {
+            const supabase = require("../config/supabase");
+
+            const ext = req.file.originalname
+                .split(".")
+                .pop()
+                .toLowerCase();
+
+            const fileName =
+                `user-${userId}-${Date.now()}.${ext}`;
+
+            const filePath = `profiles/${fileName}`;
+
+            const { error: uploadError } =
+                await supabase.storage
+                    .from("uploads")
+                    .upload(
+                        filePath,
+                        req.file.buffer,
+                        {
+                            contentType: req.file.mimetype,
+                            upsert: true,
+                        }
+                    );
+
+            if (uploadError) {
+                console.error(
+                    "SUPABASE UPLOAD ERROR:",
+                    uploadError
+                );
+
+                return res.status(500).json({
+                    success: false,
+                    message: "Gagal mengupload foto profile",
+                });
+            }
+
+            const {
+                data: publicUrlData,
+            } = supabase.storage
+                .from("uploads")
+                .getPublicUrl(filePath);
+
+            profilePhoto =
+                publicUrlData.publicUrl;
+        }
 
         let hashedPassword = null;
 
         if (password) {
             hashedPassword =
-                await bcrypt.hash(
-                    password,
-                    12
-                );
+                await bcrypt.hash(password, 12);
         }
 
         const updatedUser =
@@ -252,14 +284,12 @@ const updateProfile = async (req, res) => {
                 fullName: full_name,
                 email,
                 profilePhoto,
-                password:
-                    hashedPassword,
+                password: hashedPassword,
             });
 
         return res.json({
             success: true,
-            message:
-                "Profile berhasil diperbarui",
+            message: "Profile berhasil diperbarui",
             data: updatedUser,
         });
 
@@ -272,15 +302,13 @@ const updateProfile = async (req, res) => {
         if (error.code === "23505") {
             return res.status(409).json({
                 success: false,
-                message:
-                    "Email sudah digunakan",
+                message: "Email sudah digunakan",
             });
         }
 
         return res.status(500).json({
             success: false,
-            message:
-                "Gagal memperbarui profile",
+            message: "Gagal memperbarui profile",
         });
     }
 };

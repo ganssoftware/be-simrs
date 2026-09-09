@@ -1,3 +1,4 @@
+// dashboardModel.js
 const pool = require("../config/db");
 
 async function getDashboardSummary() {

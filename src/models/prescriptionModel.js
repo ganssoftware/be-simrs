@@ -1,3 +1,4 @@
+// persceptionModel.js
 const pool = require("../config/db");
 
 const getAllPrescriptions = async () => {

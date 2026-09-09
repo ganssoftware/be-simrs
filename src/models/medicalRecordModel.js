@@ -1,3 +1,4 @@
+// medicalRecordModel.js
 const pool = require("../config/db");
 
 const getDoctorIdByUserId = async (userId) => {

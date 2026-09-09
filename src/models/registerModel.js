@@ -1,3 +1,4 @@
+// registerModel.js
 const pool = require("../config/db");
 
 const findRoleByName = async (roleName) => {

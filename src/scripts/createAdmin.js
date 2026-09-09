@@ -1,3 +1,4 @@
+// creatAdmin.js
 const bcrypt = require("bcryptjs");
 const pool = require("../config/db");
 

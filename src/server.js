@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const path = require("path");
 require("dotenv").config();
 
 const authRoutes = require("./routes/authRoutes");
@@ -20,20 +19,13 @@ const app = express();
 
 app.use(
     cors({
-        origin: "https://simrs.wasmer.app",
+        origin: "https://simrs-ten.vercel.app",
         credentials: true,
     })
 );
 
 app.use(express.json());
 app.use(cookieParser());
-
-app.use(
-    "/uploads",
-    express.static(
-        path.join(__dirname, "uploads")
-    )
-);
 
 app.get("/", (req, res) => {
     res.json({
@@ -54,10 +46,12 @@ app.use("/api/medicines", medicineRoutes);
 app.use("/api/prescriptions", prescriptionRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
-const PORT = process.env.PORT || 5000;
+module.exports = app;
 
-app.listen(PORT, () => {
-    console.log(
-        `SIMRS API running on port ${PORT}`
-    );
-});
+if (process.env.NODE_ENV !== "production") {
+    const PORT = process.env.PORT || 5000;
+
+    app.listen(PORT, () => {
+        console.log(`SIMRS API running on port ${PORT}`);
+    });
+}

@@ -1,3 +1,4 @@
+// registrationModel.js
 const pool = require("../config/db");
 
 function formatDateYYYYMMDD(date = new Date()) {

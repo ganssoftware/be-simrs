@@ -1,3 +1,4 @@
+// polyclinicModel.js
 const pool = require("../config/db");
 
 const getAllPolyclinics = async () => {

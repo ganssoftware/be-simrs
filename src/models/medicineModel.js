@@ -1,3 +1,4 @@
+// medicalModel.js
 const pool = require("../config/db");
 
 const getAllMedicines = async () => {

@@ -1,3 +1,4 @@
+// doctorModel.js
 const pool = require("../config/db");
 
 const getAllDoctors = async () => {

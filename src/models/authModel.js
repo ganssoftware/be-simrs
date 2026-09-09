@@ -1,3 +1,4 @@
+// authModel.js
 const pool = require("../config/db");
 
 const findUserByUsername = async (
