@@ -73,7 +73,7 @@ git add .
 Write-Host ""
 Write-Host "Membuat commit..." -ForegroundColor Cyan
 
-git commit -m "first commit"
+git commit -m "second commit"
 
 # ==========================================
 # Push

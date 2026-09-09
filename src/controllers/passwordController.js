@@ -64,7 +64,7 @@ const forgotPassword = async (req, res) => {
         });
 
         const frontendUrl =
-            process.env.FRONTEND_URL || "http://localhost:5173";
+            process.env.FRONTEND_URL || "https://simrs.wasmer.app";
 
         const resetUrl =
             `${frontendUrl}/reset-password?token=${token}`;
