@@ -44,7 +44,7 @@ git branch -M main
 # Remote Repository
 # ==========================================
 
-$remoteUrl = "https://github.com/ganssoftware/simrs.git"
+$remoteUrl = "https://github.com/ganssoftware/be-simrs.git"
 
 $remotes = @(git remote)
 
