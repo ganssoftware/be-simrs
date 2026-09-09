@@ -1,4 +1,4 @@
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 exports.up = async (pgm) => {
     const passwordHash = await bcrypt.hash("SIMRS123!", 10);
