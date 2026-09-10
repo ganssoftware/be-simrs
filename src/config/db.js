@@ -2,8 +2,20 @@ const { Pool } = require("pg");
 
 require("dotenv").config();
 
+let connectionString = process.env.POSTGRES_URL;
+
+if (!connectionString) {
+    throw new Error("POSTGRES_URL tidak tersedia");
+}
+
+// Hilangkan parameter sslmode dari connection string
+connectionString = connectionString.replace(
+    /([?&])sslmode=[^&]*/i,
+    "$1"
+);
+
 const pool = new Pool({
-    connectionString: process.env.POSTGRES_URL,
+    connectionString,
 
     ssl: {
         rejectUnauthorized: false,
