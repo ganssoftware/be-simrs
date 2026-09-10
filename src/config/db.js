@@ -3,7 +3,7 @@ const { Pool } = require("pg");
 require("dotenv").config();
 
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: process.env.POSTGRES_URL,
 
     ssl: {
         rejectUnauthorized: false,
@@ -15,7 +15,7 @@ const pool = new Pool({
 });
 
 pool.on("connect", () => {
-    console.log("PostgreSQL connected");
+    console.log("PostgreSQL connected to Supabase");
 });
 
 pool.on("error", (err) => {
